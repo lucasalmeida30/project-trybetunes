@@ -15,7 +15,6 @@ class Album extends React.Component {
 
   apiMusics = async () => {
     const { match: { params: { id } } } = this.props;
-    console.log(this.props);
     const api = await getMusics(id);
     this.setState(({
       musics: api,

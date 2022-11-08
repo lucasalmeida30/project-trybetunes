@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Loading from '../pages/Loading';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class MusicCard extends React.Component {
   state = {
@@ -9,11 +9,23 @@ class MusicCard extends React.Component {
     loading: false,
   };
 
+  async componentDidMount() {
+    const returnLocal = await this.getMusics();
+    const { trackId } = this.props;
+    const test = returnLocal.length > 0 && returnLocal.some((e) => e.trackId === trackId);
+    this.setState({ isChecked: test, loading: false });
+  }
+
   favoritesMusics = async ({ target }) => {
     const { checked } = target;
     this.setState({ isChecked: checked, loading: true });
     await addSong(this.props);
     this.setState({ loading: false });
+  };
+
+  getMusics = async () => {
+    this.setState({ loading: true });
+    return getFavoriteSongs();
   };
 
   render() {
@@ -50,7 +62,7 @@ class MusicCard extends React.Component {
 MusicCard.propTypes = {
   trackName: PropTypes.string.isRequired,
   previewUrl: PropTypes.string.isRequired,
-  trackId: PropTypes.string.isRequired,
+  trackId: PropTypes.number.isRequired,
 };
 
 export default MusicCard;
